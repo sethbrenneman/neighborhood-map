@@ -1,0 +1,9 @@
+{
+  "name": "neighborhood-map",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "knockout": "^3.4.2"
+  }
+}

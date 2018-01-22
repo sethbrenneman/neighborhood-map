@@ -1,0 +1,50 @@
+<html>
+<body>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  $.ajax({
+    type: "GET",
+    dataType: "jsonp",
+    cache: false,
+    url: "https://api.foursquare.com/v2/venues/search?ll=43.07667000000001,-89.38439&client_id=GPXNB11D35APIACAZ3AEIB0ULUGCT053LCBYGKJNFFKN51WF&client_secret=J2F0KJ5JV0XUNSNR0DNTDECSTGJBTBRUFZRPSZTNIWGSTRAW&v=20180109",
+    success: function(data) {
+      console.log(data);
+    }
+  });
+
+  // $.ajax({
+  //   url: "https://api.yelp.com/v3/businesses/search?latitude=43&longitude=-89",
+  //   dataType: "jsonp",
+  //   success: function(data) {console.log(data)}
+  //   });
+  // console.log("HELLO");
+  // $.get({
+  //   // dataType: "jsonp",
+  //   type: "GET",
+  //   headers: {"Authorization": "Bearer t772eSL-EdrGpilL40oXUnNJk3dPW5_kaqocY7O6Ex-eRWRfRBzA7UbACx54PCcyKm5gd2w-Ammuz2xYS_DfGNstwDrLIfq2xT7sUIly8NHYwGT6_KaCUdWmrcRPWnYx"},
+  //   url: "https://api.yelp.com/v3/businesses/search?latitude=43&longitude=-89"
+  // }).done(function(data){
+  //   console.log("DATA");
+  //   console.log(data);
+  // });
+  // console.log("GOODBYE");
+//   $.get(
+//     "https://api.yelp.com/v3/businesses/search?latitude=43.074676&longitude=-89.384130",
+//     function(data) {
+//        alert('page content: ' + data);
+//     }
+// );
+
+//   function httpGetAsync(theUrl, callback) {
+//     var xmlHttp = new XMLHttpRequest();
+//     xmlHttp.onreadystatechange = function() {
+//         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+//             callback(xmlHttp.responseText);
+//     }
+//     xmlHttp.open("GET", theUrl, true); // true for asynchronous
+//     xmlHttp.send(null);
+//   }
+
+</script>
+</html>

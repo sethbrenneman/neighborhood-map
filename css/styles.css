@@ -1,0 +1,75 @@
+body {
+  height: 100%;
+  background-color: #3f444c;
+}
+
+html {
+  height: 100%;
+}
+
+.container-fluid {
+  height: 100%;
+}
+.row {
+  height: 100%;
+}
+.toolbar {
+  background-color: #7589a8;
+  height: 100%;
+}
+
+.col-md-2 {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+#map {
+  height: 100%;
+}
+/*
+#dropdown-menu {
+  display: none;
+}*/
+
+.show {
+  display: block;
+}
+
+.dropdown-button {
+  background-color: #001f3f;
+  color: #0074d9;
+  border: none;
+}
+
+.filter-list {
+  background-color: #aaaaaa;
+  color: #111111;
+  border: none;
+  width: 100%;
+}
+
+.filter-list:hover {
+  background-color: #111111;
+  color: #aaaaaa;
+}
+
+.marker-on {
+  background-color: #7589a8;
+  color: #dddddd;
+  margin: 0 0 0 0px;
+}
+
+.marker-on:hover {
+  background-color: #3d9970;
+  color: #111111;
+}
+
+.highlighted {
+  background-color: #3d9970;
+  color: #111111;
+}
+
+.marker-off {
+  background-color: #3f444c;
+  color: #aaaaaa;
+  margin: 0 0 0 0px;
+}
