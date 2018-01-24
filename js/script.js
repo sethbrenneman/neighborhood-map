@@ -146,7 +146,7 @@ var viewModel = function() {
 
   self.toggleDropdown = function() {
     self.showDropdown(!self.showDropdown());
-  }
+  };
 
   self.filter = function(category, data) {
     self.locations().forEach(function(element) {
@@ -166,7 +166,7 @@ var viewModel = function() {
   self.setSelected = function(element) {
 
     // change the current selection to the element
-    if (!(self.currentlySelected() == element)) {
+    if (self.currentlySelected() != element) {
       self.currentlySelected(element);
     }
 
@@ -203,7 +203,7 @@ function initMap() {
       map: map
     });
     marker.addListener('click', function() {
-      self.setSelected(element)
+      self.setSelected(element);
     });
     element.marker = marker;
   });
@@ -237,10 +237,10 @@ var renderMarkers = function() {
       element.marker.setAnimation(null);
     }
   });
-}
+};
 
 var populateInfoWindow = function(element) {
-  var url = "https://api.foursquare.com/v2/venues/" + element.id + "?client_id=TBMEZ3VIKYRD1G1V3SOKNVVQEZJLMMPWX4Y3GEV5XTHDWEBV&client_secret=5SC5VPLHUOFPUF0U4ZWZMCZTHWWJ1XDEQAIS2YVZNRAIEBDU&v=20180109"
+  var url = "https://api.foursquare.com/v2/venues/" + element.id + "?client_id=TBMEZ3VIKYRD1G1V3SOKNVVQEZJLMMPWX4Y3GEV5XTHDWEBV&client_secret=5SC5VPLHUOFPUF0U4ZWZMCZTHWWJ1XDEQAIS2YVZNRAIEBDU&v=20180109";
   $.ajax({
     type: "GET",
     dataType: "jsonp",
@@ -252,7 +252,7 @@ var populateInfoWindow = function(element) {
         var venue = data.response.venue;
         var content = "<div class=\"min-info\">Information courtesy of Foursquare</div>";
         content += "<div class=\"venue-name\">" + venue.name + "</div>";
-        content += "<div class=\"venue-address\"> Address: "
+        content += "<div class=\"venue-address\"> Address: ";
         venue.location.formattedAddress.forEach(function(item) {
           if (item != "United States") {
             content += "<div>" + item + "</div>";
@@ -276,4 +276,4 @@ var populateInfoWindow = function(element) {
       infoWindow.setContent("Unfortunately, additional info could not be successfully retrieved.  API call failed.  Error code: " + jqXHR.status);
     }
   });
-}
+};
