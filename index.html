@@ -33,11 +33,12 @@
           </div>
         </div>
         <div id="list-view" data-bind="foreach: locations">
-          <p data-bind="text: title, css: { 'marker-on': visible(), 'marker-off': !visible(), highlighted: currentlySelected()}, click: visible() ? self.setSelected : null"></p>
+          <p data-bind="text: title, css: {'marker-on': visible(), 'marker-off': !visible(), highlighted: $parent.currentlySelected() == $data}, click: visible() ? $parent.setSelected : null"></p>
+          <!-- <p data-bind="text: title, css: { 'marker-on': visible(), 'marker-off': !visible(), highlighted: $parent.currentlySelected == $data}, click: visible() ? self.setSelected : null"></p> -->
           <!-- <p data-bind="text: title, css: { 'marker-on': visible(), 'marker-off': !visible() }, click: function(data, event) {visible() ? self.toggleMarker(this) : null; self.toggleSelected(data, event);}"> -->
         </div>
         <div id="foursquare">
-          PLACEHOLDER
+
         </div>
       </div>
       <div class="col-md-10" id="map">

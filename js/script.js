@@ -1,10 +1,15 @@
 var map;
 
+var infoWindow;
+
 var locations = [];
 
-function showDropdown() {
-  document.getElementById("dropdown-menu").classList.toggle("show");
-}
+// each location contains:
+// --a title
+// --lat / lng coordinates
+// --a foursquare id
+// --an array of keywords to filter by
+// --a boolean to keep track of visibility
 
 locations = [
   {title: "Wisconsin Capitol", location: {lat: 43.074676, lng: -89.384130}, id: "4b141851f964a520369d23e3", filters: ["historic", "recreational"]},
@@ -22,17 +27,17 @@ locations = [
   {title: "Plaka Taverna", location: {lat: 43.075654, lng: -89.37727899999999}, id: "4b6321b2f964a52057652ae3", filters: ["restaurant"]}
 ];
 
+
 locations.forEach(function(element) {
   element.visible = ko.observable(true);
-  element.currentlySelected = ko.observable(false);
-})
+});
 
 var viewModel = function() {
   self = this;
-
-  self.foursquare = ko.observable();
-
+  // keep track of whether or not to show the dropdown menu
   self.showDropdown = ko.observable(false);
+  // keep track of the currently selected location
+  self.currentlySelected = ko.observable(null);
 
   self.locations = ko.observableArray(locations);
 
@@ -41,55 +46,34 @@ var viewModel = function() {
   }
 
   self.filter = function(category, data) {
-    // toggle visible observable in each location if it's filter keyword matches the category clicked (or category clicked was 'all')
-    for (var i = 0; i < self.locations().length; i++) {
-      //set visible to true or false
-      self.locations()[i].visible(locations[i].filters.includes(category) || category == 'all');
-      //remove / put markers back on map
-      if(!self.locations()[i].visible()) {
-        self.locations()[i].marker.setMap(null);
-      }
-      else {
-        self.locations()[i].marker.setMap(map);
-      }
+    self.locations().forEach(function(element) {
+      // set each element's visible property based on category clicked
+      element.visible(element.filters.includes(category) || category == 'all');
 
-      //if applying the filter removes the currently selected item, deselect it
-      if (!self.locations()[i].visible() && self.locations()[i].currentlySelected()) {
-        console.log(self.locations()[i].title);
-        console.log("STOPALLANIMATIONS");
-        self.locations()[i].currentlySelected(false);
-        self.stopAllAnimation();
+      // if the currently selected location was removed by the filter, clear currentlySelected
+      if(!element.visible() && self.currentlySelected() == element) {
+        self.setSelected(null);
       }
-    }
+    });
+
+    // markers need to be updated
+    renderMarkers();
   };
-
-  self.clearSelection = function() {
-    self.locations().forEach(function(element){element.currentlySelected(false)});
-  }
 
   self.setSelected = function(element) {
-    if (element.currentlySelected()) {
-      self.clearSelection();
-    }
-    else {
-      self.clearSelection();
-      element.currentlySelected(true);
-    }
-    self.toggleMarker(element);
-  };
 
-  self.stopAllAnimation = function() {
-    self.locations().forEach(function(element) {element.marker.setAnimation(null)});
-  }
+    // change the current selection to the element
+    if(!(self.currentlySelected() == element)) {
+      self.currentlySelected(element);
+    }
 
-  self.toggleMarker = function(e) {
-    if (!e.marker.getAnimation()) {
-      self.stopAllAnimation();
-      e.marker.setAnimation(google.maps.Animation.BOUNCE);
-    }
+    // if the element clicked IS the current selection, set the current selection to null
     else {
-      self.stopAllAnimation();
+      self.currentlySelected(null);
     }
+
+    // updated markers
+    renderMarkers();
   };
 };
 
@@ -99,44 +83,86 @@ ko.applyBindings(new viewModel());
 
 function initMap() {
 
-    map = new google.maps.Map(document.getElementById("map"), {
+  map = new google.maps.Map(document.getElementById("map"), {
     center: {lat: 43.074685, lng: -89.38418},
     zoom: 14
   });
 
-  for(var i = 0; i < locations.length; i++) {
-    var marker = new google.maps.Marker({position: locations[i].location, title: locations[i].title, map: map});
-    // marker.addListener('click', display(this));
-    locations[i].marker = marker;
-  }
-}
+  infoWindow = new google.maps.InfoWindow();
 
-
-var list = function() {
-  $.each(locations, function(i, item) {
-    // console.log(locations[i].title);
-    var url = "https://api.foursquare.com/v2/venues/search?ll=" + item.location.lat + "," + item.location.lng + "&client_id=GPXNB11D35APIACAZ3AEIB0ULUGCT053LCBYGKJNFFKN51WF&client_secret=J2F0KJ5JV0XUNSNR0DNTDECSTGJBTBRUFZRPSZTNIWGSTRAW&v=20180109"
-    $.ajax({
-      type: "GET",
-      dataType: "jsonp",
-      cache: false,
-      url: url,
-      success: function(data) {
-        $.ajax({
-          type: "GET",
-          dataType: "jsonp",
-          cache: false,
-          url: "https://api.foursquare.com/v2/venues/" + item.id + "?client_id=GPXNB11D35APIACAZ3AEIB0ULUGCT053LCBYGKJNFFKN51WF&client_secret=J2F0KJ5JV0XUNSNR0DNTDECSTGJBTBRUFZRPSZTNIWGSTRAW&v=20180109",
-          success: function(moredata) {
-            console.log(i);
-            console.log(item.title);
-            console.log(data);
-            console.log(moredata);
-          }
-        });
-      }
-    });
+  self.locations().forEach(function(element) {
+    var marker = new google.maps.Marker({position: element.location, title: element.title, map: map});
+    marker.addListener('click', function(){self.setSelected(element)});
+    element.marker = marker;
   });
 }
 
-// list();
+var renderMarkers = function() {
+  // remove infoWindow if no locations are selected
+  if(!self.currentlySelected()) {
+    infoWindow.close();
+  }
+
+  self.locations().forEach(function(element){
+    // locations that are not visible have their markers removed
+    if(!element.visible()) {
+      element.marker.setMap(null);
+    }
+
+    // locations that are visible are added to the map if they are not already there
+    else {
+      if(!element.marker.getMap()) {
+        element.marker.setMap(map);
+      }
+    }
+
+    // the currently selected location gets its marker animated and infoWindow populated
+    if(self.currentlySelected() == element) {
+      infoWindow.open(map, element.marker);
+      populateInfoWindow(element);
+      element.marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+    else {
+      element.marker.setAnimation(null);
+    }
+  });
+}
+
+var populateInfoWindow = function(element) {
+  var url = "https://api.foursquare.com/v2/venues/" + element.id + "?client_id=TBMEZ3VIKYRD1G1V3SOKNVVQEZJLMMPWX4Y3GEV5XTHDWEBV&client_secret=5SC5VPLHUOFPUF0U4ZWZMCZTHWWJ1XDEQAIS2YVZNRAIEBDU&v=20180109"
+  $.ajax({
+    type: "GET",
+    dataType: "jsonp",
+    cache: false,
+    url: url,
+    success: function(data) {
+      // on successful api call, populate infoWindow with name, address, phone and an image
+      if(data.meta.code == 200){
+        var venue = data.response.venue;
+        var content = "<div class=\"min-info\">Information courtesy of Foursquare</div>";
+        content += "<div class=\"venue-name\">" + venue.name + "</div>";
+        content += "<div class=\"venue-address\"> Address: "
+        venue.location.formattedAddress.forEach(function(item){
+          if(item != "United States") {
+            content += "<div>" + item + "</div>";
+          }
+        });
+        if (venue.contact.formattedPhone) {
+          content += "</div><div class=\"venue-phone\"> Phone: " + venue.contact.formattedPhone + "</div>";
+        }
+        else {
+          content += "</div><div class=\"venue-phone\"> Phone: N/A</div>";
+        }
+        content += "<img src=\"" + venue.bestPhoto.prefix + "200x200" + venue.bestPhoto.suffix + "\">";
+        infoWindow.setContent(content);
+      }
+      // let user know if foursquare could not retrieve data
+      else {
+        infoWindow.setContent("Unfortunately, additional info could not be successfully retrieved.  Error code: " + data.meta.code);
+      }
+    },
+    error: function(jqXHR) {
+      // let user know if api call failed
+      infoWindow.setContent("Unfortunately, additional info could not be successfully retrieved.  API call failed.  Error code: " + jqXHR.status);}
+  });
+}
