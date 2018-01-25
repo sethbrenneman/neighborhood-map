@@ -10,9 +10,11 @@ html {
 .container-fluid {
   height: 100%;
 }
+
 .row {
   height: 100%;
 }
+
 .toolbar {
   background-color: #7589a8;
   height: 100%;
@@ -22,6 +24,7 @@ html {
   padding-left: 0px;
   padding-right: 0px;
 }
+
 #map {
   height: 100%;
 }
