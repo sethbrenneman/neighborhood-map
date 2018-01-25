@@ -85,3 +85,8 @@ html {
 .venue-phone {
   color: #000000;
 }
+
+.map-error {
+  font-weight: bolder;
+  color: red;
+}

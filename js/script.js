@@ -1,3 +1,5 @@
+"use-strict";
+
 var map;
 
 var infoWindow;
@@ -184,7 +186,7 @@ var viewModel = function() {
 
 ko.applyBindings(new viewModel());
 
-function initMap() {
+var initMap = function() {
 
   map = new google.maps.Map(document.getElementById("map"), {
     center: {
@@ -207,7 +209,11 @@ function initMap() {
     });
     element.marker = marker;
   });
-}
+};
+
+var mapErrorHandler = function() {
+  $("#map").html("<div class=\"map-error\">Your map could not load due to an error!");
+};
 
 var renderMarkers = function() {
   // remove infoWindow if no locations are selected
