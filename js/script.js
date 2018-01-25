@@ -212,7 +212,7 @@ var initMap = function() {
 };
 
 var mapErrorHandler = function() {
-  $("#map").html("<div class=\"map-error\">Your map could not load due to an error!");
+  $("#map").html("<div class=\"map-error\">Your map could not load due to an error!  See browser console for details.");
 };
 
 var renderMarkers = function() {
@@ -270,6 +270,7 @@ var populateInfoWindow = function(element) {
           content += "</div><div class=\"venue-phone\"> Phone: N/A</div>";
         }
         content += "<img src=\"" + venue.bestPhoto.prefix + "200x200" + venue.bestPhoto.suffix + "\">";
+        content += "<br><a href=\"" + venue.shortUrl + "\">" + venue.name + "</a>";
         infoWindow.setContent(content);
       }
       // let user know if foursquare could not retrieve data
