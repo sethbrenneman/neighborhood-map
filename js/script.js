@@ -270,7 +270,7 @@ var populateInfoWindow = function(element) {
           content += "</div><div class=\"venue-phone\"> Phone: N/A</div>";
         }
         content += "<img src=\"" + venue.bestPhoto.prefix + "200x200" + venue.bestPhoto.suffix + "\">";
-        content += "<br><a href=\"" + venue.shortUrl + "\">" + venue.name + "</a>";
+        content += "<br><a href=\"" + venue.shortUrl + "?ref=TBMEZ3VIKYRD1G1V3SOKNVVQEZJLMMPWX4Y3GEV5XTHDWEBV\">" + venue.name + "</a>";
         infoWindow.setContent(content);
       }
       // let user know if foursquare could not retrieve data
